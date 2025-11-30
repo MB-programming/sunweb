@@ -8,3 +8,4 @@ export * from './futuresApi';
 export * from './stepsApi';
 export * from './attributesApi';
 export * from './usersApi';
+export * from './clientsApi';

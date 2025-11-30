@@ -29,47 +29,22 @@ const ProjectsSection2 = () => {
 
   const sectionRef = useRef(null);
 
-  // Fallback data
-  const defaultBoxesData = [
-    {
-      id: 1,
-      title: "UI Design",
-      description:
-        "We craft user focused designs that combine creativity, functionality, and seamless experiences.",
-    },
-    {
-      id: 2,
-      title: "Web Development",
-      description:
-        "We build fast, scalable, and secure websites & apps tailored to your business goals.",
-    },
-    {
-      id: 3,
-      title: "Web Apps",
-      description:
-        "We create custom WordPress websites that are easy to manage, fast, and fully responsive.",
-    },
-    {
-      id: 4,
-      title: "UX Design",
-      description:
-        "We design smooth and intuitive experiences that delight your users.",
-    },
-  ];
-
-  // Use API data if available
-  const BoxesData = projects?.length > 0 ? projects.map(project => ({
+  // Map API data to component format
+  const BoxesData = projects?.map(project => ({
     id: project.id,
     title: project.title,
     description: project.description || "",
     slug: project.slug,
     image: project.seo?.cover || "/project-ex.png",
     client_name: project.client_name,
-  })) : defaultBoxesData;
+    status: project.status,
+  })) || [];
 
   useGSAP(() => {
-    const boxes = sectionRef.current.querySelectorAll(".service-box");
-    const texts = sectionRef.current.querySelectorAll(".service-text");
+    const boxes = sectionRef.current?.querySelectorAll(".service-box");
+    const texts = sectionRef.current?.querySelectorAll(".service-text");
+
+    if (boxes && texts) {
 
     // Boxes animation - smooth (no scale)
     gsap.fromTo(
@@ -104,6 +79,7 @@ const ProjectsSection2 = () => {
         },
       }
     );
+    }
   });
 
   return (
@@ -121,9 +97,17 @@ const ProjectsSection2 = () => {
         </div>
       ) : error ? (
         <div className="flex justify-center items-center py-20">
-          <p className="text-red-500 text-lg">Error loading projects. Using default data.</p>
+          <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-lg">
+            <p>Error loading projects. Please try again later.</p>
+          </div>
+        </div>
+      ) : BoxesData.length === 0 ? (
+        <div className="flex justify-center items-center py-20">
+          <p className="text-body text-lg">No projects available</p>
         </div>
       ) : null}
+
+      {!loading && !error && BoxesData.length > 0 && (
 
       <div className="mt-10 relative z-50">
         {/* Navigation buttons */}
@@ -186,6 +170,7 @@ const ProjectsSection2 = () => {
           ))}
         </Swiper>
       </div>
+      )}
     </div>
   );
 };
