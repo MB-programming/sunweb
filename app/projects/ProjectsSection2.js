@@ -10,23 +10,27 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { useGSAP } from "@gsap/react";
 import Link from "next/link";
+import { useProjects } from "../lib/hooks/useProjects";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const ProjectsSection2 = () => {
-  const [resize  , setResize] = useState();
-  useEffect(()=>{
-    if (typeof window !== "undefined") {
-       setResize((85 / 100) * window.innerWidth);
+  const [resize, setResize] = useState();
+  const { projects, loading, error } = useProjects();
 
-    
-      window.addEventListener("resize" , ()=> setResize(window.innerWidth))
-      return ()=> window.removeEventListener("resize" , ()=> setResize(window.innerWidth))
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setResize((85 / 100) * window.innerWidth);
+
+      window.addEventListener("resize", () => setResize(window.innerWidth))
+      return () => window.removeEventListener("resize", () => setResize(window.innerWidth))
     }
-  },[])
+  }, [])
+
   const sectionRef = useRef(null);
 
-  const BoxesData = [
+  // Fallback data
+  const defaultBoxesData = [
     {
       id: 1,
       title: "UI Design",
@@ -52,6 +56,16 @@ const ProjectsSection2 = () => {
         "We design smooth and intuitive experiences that delight your users.",
     },
   ];
+
+  // Use API data if available
+  const BoxesData = projects?.length > 0 ? projects.map(project => ({
+    id: project.id,
+    title: project.title,
+    description: project.description || "",
+    slug: project.slug,
+    image: project.seo?.cover || "/project-ex.png",
+    client_name: project.client_name,
+  })) : defaultBoxesData;
 
   useGSAP(() => {
     const boxes = sectionRef.current.querySelectorAll(".service-box");
@@ -101,9 +115,19 @@ const ProjectsSection2 = () => {
         </h3>
       </div>
 
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <p className="text-white text-lg">Loading projects...</p>
+        </div>
+      ) : error ? (
+        <div className="flex justify-center items-center py-20">
+          <p className="text-red-500 text-lg">Error loading projects. Using default data.</p>
+        </div>
+      ) : null}
+
       <div className="mt-10 relative z-50">
         {/* Navigation buttons */}
-        <div className="left-btn absolute top-[110%] left-[38%]  md:left-[-5%] md:top-1/2 z-50 rounded-full border border-stroke cursor-pointer hover:bg-opacity-60 duration-200 bg-[#27284B] h-[3rem] w-[3rem] flex justify-center items-center">
+        <div className="left-btn absolute top-[110%] left-[38%] md:left-[-5%] md:top-1/2 z-50 rounded-full border border-stroke cursor-pointer hover:bg-opacity-60 duration-200 bg-[#27284B] h-[3rem] w-[3rem] flex justify-center items-center">
           <IoIosArrowBack className="text-white w-5 h-5" />
         </div>
         <div className="right-btn absolute md:!right-[-5%] top-[110%] md:left-[101%] left-[52%] md:top-1/2 z-50 rounded-full border border-stroke cursor-pointer hover:bg-opacity-60 duration-200 bg-[#27284B] h-[3rem] w-[3rem] flex justify-center items-center">
@@ -120,10 +144,14 @@ const ProjectsSection2 = () => {
         >
           {BoxesData.map((data) => (
             <SwiperSlide key={data.id}>
-              <Link href='/projects/details' className="service-box  relative border border-stroke p-3 w-full h-[26rem] overflow-hidden rounded-2xl shadow-lg cursor-pointer flex justify-center items-center group transition-all duration-700 z-10">
+              <Link
+                href={data.slug ? `/projects/${data.slug}` : '/projects/details'}
+                className="service-box relative border border-stroke p-3 w-full h-[26rem] overflow-hidden rounded-2xl shadow-lg cursor-pointer flex justify-center items-center group transition-all duration-700 z-10"
+              >
                 {/* Background image */}
                 <img
-                  src="/project-ex.png"
+                  src={data.image || "/project-ex.png"}
+                  alt={data.title}
                   className="absolute h-full w-full top-0 left-0 object-cover rounded-2xl transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
                 />
 
@@ -138,9 +166,14 @@ const ProjectsSection2 = () => {
                   <h3 className="service-text text-[1.3rem] text-white font-bold mb-2 transform transition-all duration-700 group-hover:translate-y-[-8px] group-hover:text-main">
                     {data.title}
                   </h3>
-                  <p className="service-text text-[0.9rem] text-gray-300 mb-3 opacity-90 transition-all duration-700 group-hover:translate-y-[-6px] group-hover:text-white">
+                  <p className="service-text text-[0.9rem] text-gray-300 mb-3 opacity-90 transition-all duration-700 group-hover:translate-y-[-6px] group-hover:text-white line-clamp-3">
                     {data.description}
                   </p>
+                  {data.client_name && (
+                    <p className="service-text text-[0.8rem] text-gray-400 mb-2">
+                      Client: {data.client_name}
+                    </p>
+                  )}
                   <button className="service-text mt-2 text-white border-b border-b-white group-hover:text-main group-hover:border-main transition-colors duration-500">
                     View details
                   </button>
