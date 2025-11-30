@@ -3,6 +3,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 import { gsap } from "gsap";
 import Image from "next/image";
+import { usePricingInquiryMutations } from "@/app/lib/hooks/usePricingInquiries";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Notifcation from "../Components/Notification";
 
 const plans = {
   basic: {
@@ -54,7 +58,16 @@ const PricingSection2 = () => {
   const [activePlan, setActivePlan] = useState("basic");
   const [fromValue, setFromValue] = useState(plans.basic.priceFrom);
   const [toValue, setToValue] = useState(plans.basic.priceTo);
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    message: ""
+  });
 
+  const { createInquiry, loading } = usePricingInquiryMutations();
   const contentRef = useRef(null);
   const listRef = useRef([]);
 
@@ -108,6 +121,52 @@ const PricingSection2 = () => {
   }, [activePlan]);
 
   const plan = plans[activePlan];
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.email) {
+      toast.error("Name and email are required!");
+      return;
+    }
+
+    try {
+      // Create inquiry with the selected plan information
+      const inquiryData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        service_id: null, // We can use a specific ID if needed
+        description: `Pricing Inquiry for ${plan.title}\n\nPhone: ${formData.phone}\nCompany: ${formData.company}\n\nMessage: ${formData.message}\n\nSelected Plan: ${plan.title} ($${plan.priceFrom} - $${plan.priceTo})`,
+        date: new Date().toISOString().split('T')[0],
+        time: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
+      };
+
+      await createInquiry(inquiryData);
+      toast.success("Your inquiry has been submitted successfully! We'll contact you soon.");
+
+      // Reset form and close modal
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        message: ""
+      });
+      setShowModal(false);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to submit inquiry. Please try again.");
+    }
+  };
 
   return (
     <div className="px-[5%] py-20 flex flex-col md:flex-row items-start gap-[5%]">
@@ -183,13 +242,138 @@ const PricingSection2 = () => {
 
             {/* Button at bottom */}
             <div className="flex justify-center mt-2 mb-6">
-              <button className="bg-main text-black px-8 md:py-3 py-2 rounded-full font-semibold hover:opacity-80 transition">
+              <button
+                onClick={() => setShowModal(true)}
+                type="button"
+                className="bg-main text-black px-8 md:py-3 py-2 rounded-full font-semibold hover:opacity-80 transition"
+              >
                 Get Started
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Get Started Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <Notifcation />
+          <div className="bg-background2 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-stroke flex justify-between items-center sticky top-0 bg-background2 z-10">
+              <div>
+                <h3 className="text-white text-2xl font-semibold">Get Started</h3>
+                <p className="text-body text-sm mt-1">
+                  {plan.title} - ${plan.priceFrom} - ${plan.priceTo}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-body hover:text-white transition"
+              >
+                <Icon icon="mdi:close" width="28" height="28" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="name" className="text-white text-base font-medium block mb-2">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full p-3 rounded border border-stroke bg-white/5 text-white outline-none focus:border-main"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="text-white text-base font-medium block mb-2">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full p-3 rounded border border-stroke bg-white/5 text-white outline-none focus:border-main"
+                    placeholder="Enter your email"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="phone" className="text-white text-base font-medium block mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="w-full p-3 rounded border border-stroke bg-white/5 text-white outline-none focus:border-main"
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="company" className="text-white text-base font-medium block mb-2">
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    id="company"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleInputChange}
+                    className="w-full p-3 rounded border border-stroke bg-white/5 text-white outline-none focus:border-main"
+                    placeholder="Enter your company name"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="text-white text-base font-medium block mb-2">
+                    Message / Requirements
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    rows="4"
+                    className="w-full p-3 rounded border border-stroke bg-white/5 text-white outline-none focus:border-main"
+                    placeholder="Tell us about your project requirements..."
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 flex gap-3">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 bg-main text-black px-6 py-3 rounded font-semibold hover:opacity-80 transition disabled:opacity-50"
+                >
+                  {loading ? "Submitting..." : "Submit Inquiry"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="px-6 py-3 rounded border border-stroke text-white hover:border-main transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
