@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Notifcation from "@/app/Components/Notification";
 import LoadingPage from "@/app/Components/Loader/Loader";
+import PageHeader from "@/app/Components/UI/PageHeader";
 
 const Page = () => {
   const { heroSection, loading: fetchLoading, refetch } = useHeroSection();
@@ -74,16 +75,18 @@ const Page = () => {
   }
 
   return (
-    <div className="mt-3">
+    <div className="mt-3 animate-fadeIn">
       {saveLoading && <LoadingPage />}
       <Notifcation />
 
-      <h3 className="text-white mt-5 text-[1.2rem] font-bold">
-        Hero Section Management
-      </h3>
-      <p className="text-body text-sm mt-2">
-        Edit the hero section content that appears on the homepage
-      </p>
+      <PageHeader
+        title="Hero Section Management"
+        description="Edit the hero section content that appears on the homepage"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/admin", icon: "mdi:view-dashboard" },
+          { label: "Hero Section" }
+        ]}
+      />
 
       <form onSubmit={handleSubmit} className="mt-5">
         <div className="bg-background2 rounded px-4 pb-6 pt-4">
