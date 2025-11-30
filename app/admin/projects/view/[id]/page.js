@@ -13,9 +13,8 @@ const Page = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await Axios.get("/projects");
-        const filtered = response.data.data.filter(item => item.slug == id);
-        setData(filtered[0]);
+        const response = await Axios.get(`/projects/${id}`);
+        setData(response.data?.data);
       } catch (error) {
         console.error("Error fetching project:", error);
       } finally {
@@ -79,13 +78,6 @@ const Page = () => {
     );
   }
 
-  const team = [
-    "Ahmed - Project Manager",
-    "Nada - UI/UX Designer",
-    "Omar - Frontend Developer",
-    "Mohamed - Backend Developer",
-  ];
-
   return (
     <div className="bg-background2 px-5 py-6 rounded">
       <div className="flex items-center justify-between">
@@ -94,14 +86,17 @@ const Page = () => {
         </h3>
         <div className="flex items-center gap-4">
           <Link
-            href={`/admin/projects/edit/${data?.slug}`}
+            href={`/admin/projects/edit/${data?.id}`}
             className="text-base text-white font-medium border border-stroke px-5 hover:bg-main hover:text-white duration-500 py-1 "
           >
             Edit
           </Link>
-          <button className="text-base text-[#E80054] font-medium bg-[#E80054] bg-opacity-10 px-5 hover:text-white hover:bg-opacity-100 duration-500 py-1 ">
-            Delete
-          </button>
+          <Link
+            href="/admin/projects"
+            className="text-base text-white font-medium bg-white/5 px-5 hover:bg-white/10 duration-500 py-1 "
+          >
+            Back
+          </Link>
         </div>
       </div>
 
@@ -125,29 +120,45 @@ const Page = () => {
       </p>
 
       <p className="mt-5 text-body text-base font-light">
-        <span className="text-white font-medium">Priority: </span>
-        High
+        <span className="text-white font-medium">Status: </span>
+        <span className={`capitalize ${
+          data?.status === 'completed' ? 'text-green-400' :
+          data?.status === 'in_progress' ? 'text-yellow-400' :
+          'text-gray-400'
+        }`}>
+          {data?.status || 'N/A'}
+        </span>
       </p>
 
-      <h4 className="text-[1.1rem] font-medium text-main mt-6">
-        Team Members
-      </h4>
-      <p className="text-white text-base mt-4">
-
-      {data?.team}
+      <p className="mt-5 text-body text-base font-light">
+        <span className="text-white font-medium">Client Name: </span>
+        {data?.client_name || 'N/A'}
       </p>
 
-      <h4 className="text-[1.1rem] font-medium text-main mt-6">
-        Files and Attachments
-      </h4>
+      {data?.service_id && (
+        <p className="mt-5 text-body text-base font-light">
+          <span className="text-white font-medium">Service ID: </span>
+          {data?.service_id}
+        </p>
+      )}
 
-      <div className="mt-4 border bg-white/5 border-stroke rounded p-4 text-[0.9rem] text-body font-light">
-        requirements.pdf
-      </div>
+      {data?.team && (
+        <>
+          <h4 className="text-[1.1rem] font-medium text-main mt-6">
+            Team Members
+          </h4>
+          <p className="text-white text-base mt-4">
+            {data?.team}
+          </p>
+        </>
+      )}
 
-      <button className="text-black hover-main bg-main font-medium mt-5 px-6 py-2 rounded hover:shadow-light duration-300">
-        Save Changes
-      </button>
+      {data?.created_at && (
+        <p className="mt-5 text-body text-base font-light">
+          <span className="text-white font-medium">Created At: </span>
+          {new Date(data.created_at).toLocaleDateString()}
+        </p>
+      )}
     </div>
   );
 };
