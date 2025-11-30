@@ -2,30 +2,10 @@ import { Icon } from "@iconify/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import MoreServices from "@/app/Components/MoreServices/MoreServices";
+import BannerSlider from "@/app/Components/BannerSlider/BannerSlider";
 
 const ProjectDetailsSection2 = () => {
-  const sideData = [
-    {
-      icon: "iconoir:design-nib",
-      title: "UI Design",
-    },
-    {
-      icon: "material-symbols:developer-mode-tv-outline-rounded",
-      title: "Web Development",
-    },
-    {
-      icon: "carbon:application-web",
-      title: "Web Apps",
-    },
-    {
-      icon: "streamline-pixel:ui-design-website",
-      title: "UX Design",
-    },
-    {
-      icon: "carbon:development",
-      title: "CMS Development",
-    },
-  ];
   const imageDetails = [
     {
       icon: "game-icons:flexible-lamp",
@@ -64,26 +44,12 @@ const ProjectDetailsSection2 = () => {
   ]
   return (
     <div className="pt-20 px-[5%] flex items-start flex-col md:flex-row gap-4">
-      <div className="w-full md:w-[395px] border border-stroke rounded-lg px-3 py-5">
-        <h3 className="text-white text-[1.1rem] font-semibold">
-          More projects
-        </h3>
-        {sideData.map((data, index) => (
-          <div
-            key={index}
-            className="border border-stroke bg-background2 rounded-md p-4 mt-4 flex items-center gap-4"
-          >
-            <Icon
-              icon={data.icon}
-              width="30"
-              height="30"
-              style={{ color: "#fff" }}
-            />
-            <span className="font-medium text-white text-[1.1rem]">
-              {data.title}
-            </span>
-          </div>
-        ))}
+      <div className="w-full md:w-[395px] space-y-4">
+        {/* More Services Component */}
+        <MoreServices />
+
+        {/* Banner Slider Component */}
+        <BannerSlider />
       </div>
       <div className="flex-1">
         <div className="w-full h-[25rem] border border-stroke rounded-xl overflow-hidden relative">

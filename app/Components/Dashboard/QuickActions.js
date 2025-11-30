@@ -45,6 +45,13 @@ const QuickActions = () => {
       icon: "mdi:currency-usd",
       href: "/admin/pricing-plans",
       color: "bg-orange-500/20 text-orange-400 hover:bg-orange-500/30"
+    },
+    {
+      title: "Add Banner",
+      description: "Create new ad banner",
+      icon: "mdi:image-plus",
+      href: "/admin/banners/add",
+      color: "bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30"
     }
   ];
 

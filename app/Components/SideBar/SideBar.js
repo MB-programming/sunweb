@@ -37,6 +37,11 @@ const SideBar = () => {
       link: "/admin/content",
     },
     {
+      title: "Banners",
+      icon: "mdi:image-multiple",
+      link: "/admin/banners",
+    },
+    {
       title: "Invoices",
       icon: "stash:invoice",
       link: "/admin/invoices",
