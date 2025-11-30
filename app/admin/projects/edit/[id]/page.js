@@ -4,13 +4,16 @@ import Notifcation from "@/app/Components/Notification";
 import Axios from "@/app/lib/Axios";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useServices } from "@/app/lib/hooks/useServices";
+import { useProjectMutations } from "@/app/lib/hooks/useProjects";
 
 const Page = ({params}) => {
-  const {id} = useParams()
+  const {id} = useParams();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const clickRef = useRef();
   const clickRef2 = useRef();
@@ -18,29 +21,45 @@ const Page = ({params}) => {
   const [seoImage, setSeoImage] = useState(null);
   const [seoPreview, setSeoPreview] = useState(null);
 
-  // Form state
-  useEffect(()=>{
-    Axios.get("/projects").then(data =>
-      {
-      console.log(data)
-      
-      const filtered = data.data.data.filter(data => data.slug == id )
-      console.log(filtered);
-        setFormData({
-      name: filtered[0].title,
-      client: filtered[0].client_name,
-      description: filtered[0].description,
-      status: filtered[0].status,
-      services: filtered[0].services_id ,
-      start: filtered[0].start_date,
-      end: filtered[0].end_date,
-      team: filtered[0].team,
-      seoTitle: filtered[0].seo.title,
-      seoDescription: filtered[0].description,
-      headCode: filtered[0].header,
-      bodyCode: filtered[0].body
-    })})
-  },[])
+  const { services: allServices, loading: servicesLoading } = useServices();
+  const { updateProject, loading: updateLoading } = useProjectMutations();
+
+  // Fetch project data
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        setLoading(true);
+        const response = await Axios.get(`/projects/${id}`);
+        const project = response.data?.data;
+
+        if (project) {
+          setFormData({
+            name: project.title || "",
+            client: project.client_name || "",
+            description: project.description || "",
+            status: project.status || "",
+            services: project.service_id || "",
+            start: project.start_date || "",
+            end: project.end_date || "",
+            team: project.team || "",
+            seoTitle: project.seo?.title || "",
+            seoDescription: project.seo?.description || "",
+            headCode: project.head_code || "",
+            bodyCode: project.body_code || ""
+          });
+        }
+      } catch (error) {
+        toast.error("Failed to load project data");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchProject();
+    }
+  }, [id]);
   const [formData, setFormData] = useState({
     name: "",
     client: "",
@@ -91,29 +110,46 @@ const Page = ({params}) => {
 
   // --------------------- SUBMIT FUNCTION ---------------------
   const handleSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
+    setLoading(true);
 
     const { name, client, description, status, services, start, end, team, seoTitle, seoDescription, headCode, bodyCode } = formData;
 
     // ---------------- VALIDATION ----------------
-    if (!name) return toast.error("Project title is required!");
-    if (!description) return toast.error("Project description is required!");
-    if (!status) return toast.error("Project status is required!");
-    if (!services) return toast.error("Project services is required!");
-    if (!start) return toast.error("Start date is required!");
-    if (!end) return toast.error("End date is required!");
-    if (new Date(end) < new Date(start))
+    if (!name) {
+      setLoading(false);
+      return toast.error("Project title is required!");
+    }
+    if (!description) {
+      setLoading(false);
+      return toast.error("Project description is required!");
+    }
+    if (!status) {
+      setLoading(false);
+      return toast.error("Project status is required!");
+    }
+    if (!services) {
+      setLoading(false);
+      return toast.error("Project services is required!");
+    }
+    if (!start) {
+      setLoading(false);
+      return toast.error("Start date is required!");
+    }
+    if (!end) {
+      setLoading(false);
+      return toast.error("End date is required!");
+    }
+    if (new Date(end) < new Date(start)) {
+      setLoading(false);
       return toast.error("End date cannot be before start date!");
-
-    if (selectedFiles.length === 0)
-      return toast.error("Please upload at least one file!");
+    }
 
     const submitFormData = new FormData();
 
     submitFormData.append("title", name);
     submitFormData.append("client_name", client);
-    submitFormData.append("slug", name);
+    submitFormData.append("slug", name.toLowerCase().replace(/\s+/g, '-'));
     submitFormData.append("description", description);
     submitFormData.append("status", status);
     submitFormData.append("service_id", services);
@@ -121,10 +157,12 @@ const Page = ({params}) => {
     submitFormData.append("end_date", end);
     submitFormData.append("team", team);
 
-    // Append multiple files
-    selectedFiles.forEach((file) => {
-      submitFormData.append("images[]", file);
-    });
+    // Append multiple files (only if new files selected)
+    if (selectedFiles.length > 0) {
+      selectedFiles.forEach((file) => {
+        submitFormData.append("images[]", file);
+      });
+    }
 
     // Append SEO data
     if (seoImage) {
@@ -136,42 +174,14 @@ const Page = ({params}) => {
     submitFormData.append("body_code", bodyCode);
 
     try {
-      for (let pair of submitFormData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-
-      const res = await Axios.post("/projects", submitFormData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await updateProject(id, submitFormData);
       setLoading(false);
-      toast.success("Project saved successfully!");
-      console.log("Success:", res.data);
-      
-      // Reset form
-      setSelectedFiles([]);
-      setSeoImage(null);
-      setSeoPreview(null);
-      setFormData({
-        name: "",
-        client: "",
-        description: "",
-        status: "",
-        services: "",
-        start: "",
-        end: "",
-        team: "",
-        seoTitle: "",
-        seoDescription: "",
-        headCode: "",
-        bodyCode: ""
-      });
-      
+      toast.success("Project updated successfully!");
+      router.push("/admin/projects");
     } catch (error) {
       setLoading(false);
       console.error("Submit Error:", error);
-      toast.error("Network error — please try again!");
+      toast.error(error?.response?.data?.message || "Failed to update project");
     }
   };
   // ------------------------------------------------------------
@@ -262,9 +272,16 @@ const Page = ({params}) => {
               onChange={handleInputChange}
               className="w-full py-3 px-5 rounded border border-stroke bg-white/5 mt-3 outline-none focus:border-main placeholder:text-body placeholder:font-light text-white"
             >
-              <option value="" className="text-body">Select Services</option>
-              <option value="1" className="text-body">Active</option>
-              <option value="1" className="text-body">Completed</option>
+              <option value="" className="text-body">Select Service</option>
+              {servicesLoading ? (
+                <option disabled className="text-body">Loading...</option>
+              ) : (
+                allServices?.map((service) => (
+                  <option key={service.id} value={service.id} className="text-body">
+                    {service.name}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 

@@ -1,16 +1,19 @@
 "use client";
 import LoadingPage from "@/app/Components/Loader/Loader";
-import Loader from "@/app/Components/Loader/Loader";
 import Notifcation from "@/app/Components/Notification";
-import Axios from "@/app/lib/Axios";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useServices } from "@/app/lib/hooks/useServices";
+import { useProjectMutations } from "@/app/lib/hooks/useProjects";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { services, loading: servicesLoading } = useServices();
+  const { createProject, loading } = useProjectMutations();
   const clickRef = useRef();
   const clickRef2 = useRef();
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -71,7 +74,7 @@ const Page = () => {
 
     formData.append("title", title);
     formData.append("client_name", client);
-    formData.append("slug", title.trim().toLowerCase().replace(" " , "-"));
+    formData.append("slug", title.trim().toLowerCase().replace(/ /g, "-"));
     formData.append("description", description);
     formData.append("status", status);
     formData.append("service_id", services);
@@ -85,7 +88,7 @@ const Page = () => {
     });
 
     // Append SEO data
-      formData.append("seo[cover]", seoImage);
+    formData.append("seo[cover]", seoImage);
     formData.append("seo[title]", document.getElementById("seoTitle").value);
     formData.append(
       "seo[description]",
@@ -96,30 +99,12 @@ const Page = () => {
     formData.append("seo[body]", document.getElementById("bodyCode").value);
 
     try {
-      setLoading(true);
-
-      for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-
-      const res = await Axios.post("/projects", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      setLoading(false);
+      await createProject(formData);
       toast.success("Project saved successfully!");
-      console.log("Success:", res.data);
-
-      // Reset form
-      // setSelectedFiles([]);
-      // setSeoImage(null);
-      // setSeoPreview(null);
-      // e.target.reset();
+      router.push("/admin/projects");
     } catch (error) {
-      setLoading(false);
       console.error("Submit Error:", error);
-      toast.error("Network error — please try again!");
+      toast.error(error?.response?.data?.message || "Network error — please try again!");
     }
   };
   // ------------------------------------------------------------
@@ -201,21 +186,26 @@ const Page = () => {
               htmlFor="services"
               className="text-white text-base font-medium"
             >
-              Services
+              Services *
             </label>
             <select
               id="services"
               className="w-full py-3 px-5 rounded border border-stroke bg-white/5 mt-3 outline-none focus:border-main placeholder:text-body placeholder:font-light text-white"
             >
               <option value="" className="text-body">
-                Select Services
+                Select Service
               </option>
-              <option value="1" className="text-body">
-                Active
-              </option>
-              <option value="1" className="text-body">
-                Completed
-              </option>
+              {servicesLoading ? (
+                <option disabled className="text-body">
+                  Loading...
+                </option>
+              ) : (
+                services?.map((service) => (
+                  <option key={service.id} value={service.id} className="text-body">
+                    {service.name}
+                  </option>
+                ))
+              )}
             </select>
           </div>
           <div className="mt-4">
