@@ -1,0 +1,23 @@
+.blogs{
+  background: url('../../Assets/aboutBg.png');
+  background-position: center;
+  background-size: cover;
+  height: 70vh;
+}
+.Subscribe{
+  background-image: url('../../Assets/subscribe.png');
+  height: 450px;
+  background-repeat: no-repeat;
+  width: 100%;
+  background-size: cover;
+  /* background-position: 100% 800%; */
+}
+@media (max-width:768px) {
+  .Subscribe{
+    background-size: 112% 104%;
+    height: 504px;
+
+  background-position: 100% 500%;
+  
+}
+}

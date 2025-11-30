@@ -1,0 +1,17 @@
+.neon-stroke {
+  filter: drop-shadow(0 0 8px #54EECC) drop-shadow(0 0 16px #54EECC);
+}
+
+.home{
+  background: url("../../../Assets/Herosection.png") !important;
+  background-position: center;
+  background-size: cover;
+  height: 100vh;
+  
+  display: flex;
+  justify-content: center;
+  /* background-attachment: fixed; */
+  align-items: center;
+  flex-direction: column;
+  /* padding-top: 20vh; */
+}

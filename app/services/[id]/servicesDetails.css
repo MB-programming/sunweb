@@ -1,0 +1,40 @@
+.services{
+  background: url('../../../Assets/aboutBg.png');
+  background-position: center;
+  background-size: cover;
+  height: 70vh;
+}
+.section5{
+  background-image: url('../../../Assets/section5-bg.png');
+  background-position: center;
+  background-size: cover;
+}
+.sideLinear{
+  background-image: url("../../../Assets/sideLinear.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.sideTab{
+  position: relative;
+  overflow: hidden;
+  transition: 0.5s ease-out;
+  cursor: pointer;
+
+}
+.sideTab::after{
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: -97%;
+  background-color: #54EECC;
+  transition: 0.5s;
+  z-index: 45;
+  transform: skew(20deg);
+}
+.sideTab:hover::after{
+  transform: skew(0deg);
+  left: 0;
+}

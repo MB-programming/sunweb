@@ -1,0 +1,19 @@
+.pricing{
+  background: url('../../Assets/aboutBg.png');
+  background-position: center;
+  background-size: cover;
+  height: 70vh;
+}
+.section5{
+  background-image: url('../../Assets/section5-bg.png');
+  background-position: center;
+  background-size: cover;
+}
+.radius{
+  border-radius: 100px 200px 100px 100px
+}
+@media (max-width:768px) {
+  .radius{
+    border-radius: 50px 100px 50px 50px
+  }
+}

@@ -1,0 +1,6 @@
+.footer{
+  background: url('../../../Assets/footer.png');
+  height: 100vh;
+  background-position: center;
+  background-size: cover;
+}

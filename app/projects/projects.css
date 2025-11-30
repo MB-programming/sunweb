@@ -1,0 +1,14 @@
+.projects{
+  background: url('../../Assets/aboutBg.png');
+  background-position: center;
+  background-size: cover;
+  height: 70vh;
+}
+.swiper-button-lock {
+  display: flex !important;
+}
+.section5{
+  background-image: url('../../Assets/section5-bg.png');
+  background-position: center;
+  background-size: cover;
+}

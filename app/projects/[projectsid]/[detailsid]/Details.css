@@ -1,0 +1,201 @@
+.section5{
+  background-image: url('../../../../Assets/section5-bg.png');
+  background-position: center;
+  background-size: cover;
+}
+
+.projects{
+  background: url('../../../../Assets/aboutBg.png');
+  background-position: center;
+  background-size: cover;
+  height: 70vh;
+}
+.DevelopmentProjectDetails .content {
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  gap: 5vw;
+}
+.DevelopmentProjectDetails .content .img {
+  width: 50%;
+}
+.image-gallery-thumbnail:hover,
+.image-gallery-thumbnail.active {
+  border-color: var(--main-color) !important;
+}
+
+.image-gallery-content .image-gallery-slide .image-gallery-image {
+  border: 0.1px solid #00000055;
+  padding: 20px 50px;
+  height: 70vh !important;
+}
+image-gallery-slide .image-gallery-image {
+  object-fit: cover !important;
+}
+.image-gallery-right-nav .image-gallery-svg {
+  width: 30px !important;
+  height: 30px !important;
+  color: #000000 !important;
+  border-radius: 50%;
+  background-color: #fafafa;
+  box-shadow: none !important;
+}
+
+.image-gallery-left-nav .image-gallery-svg {
+  width: 30px !important;
+  height: 30px !important;
+  color: #000000 !important;
+  border-radius: 50%;
+  background-color: #fafafa;
+  box-shadow: none !important;
+}
+.image-gallery-thumbnail .image-gallery-thumbnail-image{
+  height: 100px !important;
+  border: none !important;
+}
+.image-gallery-content .image-gallery-slide .image-gallery-image{
+  border: none !important;
+  padding: 0 !important;
+  width: 100% !important;
+
+}
+.image-gallery-thumbnail img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.DevelopmentProjectDetails .text h3 {
+  color: white;
+  font-weight: 500;
+  font-size: 1.8rem;
+  max-width: 280px;
+}
+.DevelopmentProjectDetails .text p {
+  color: var(--text-color);
+  font-size: 1rem;
+  margin-top: 10px;
+}
+.DevelopmentProjectDetails .flex .button {
+  color: black;
+  background-color: var(--main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px;
+  border-radius: 2px;
+  margin-top: 15px;
+  transition: 0.3s;
+}
+.DevelopmentProjectDetails .flex .button:hover{
+filter: drop-shadow(0 0 2px var(--main-color));
+}
+
+.DevelopmentProjectDetails .details {
+  margin-top: 20px;
+}
+.DevelopmentProjectDetails .details h4 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: white;
+
+}
+.DevelopmentProjectDetails .details .item {
+  margin-left: 20px;
+  flex-direction: column;
+  display: flex;
+  color: #D1D5DB;
+  justify-content: start;
+  align-items: start;
+  gap: 10px;
+}
+.DevelopmentProjectDetails .details .titles {
+  flex-direction: column;
+  display: flex;
+  justify-content: start;
+  color: white;
+  align-items: start;
+  gap: 10px;
+  margin-right: 20px;
+}
+.DevelopmentProjectDetails .details .container {
+  display: flex;
+  margin-top: 20px;
+  justify-content: start;
+  align-items: start;
+}
+.image-gallery-thumbnails .image-gallery-thumbnails-container{
+  text-align: start !important;
+  
+}
+.DevelopmentProjectDetails .details .titles span {
+  font-size: 1.1rem;
+  white-space: nowrap;
+  color: var(--text-color);
+}
+.DevelopmentProjectDetails .details .item span {
+  font-size: 1.1rem;
+  white-space: nowrap;
+  color: var(--bg-color);
+}
+.DevelopmentProjectDetails .discription {
+  margin-top: 10vh;
+}
+.DevelopmentProjectDetails .discription h3 {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.DevelopmentProjectDetails .discription p {
+  color: #D1D5DB;
+  font-size: 1rem;
+  margin-top: 20px;
+  max-width: 50%;
+  font-weight: 400;
+}
+
+@media (max-width: 882px) {
+  .DevelopmentProjectDetails .content {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .DevelopmentProjectDetails .content .img {
+    width: 90vw;
+  }
+  .image-gallery-content .image-gallery-slide .image-gallery-image {
+    width: 90vw;
+    height: auto;
+    border: none !important;
+    margin: auto;
+  }
+  .image-gallery-slide {
+    width: 100% !important;
+  }
+
+  .DevelopmentProjectDetails .text{
+    padding: auto 5vw;
+  }
+.DevelopmentProjectDetails .text h3 {
+  max-width: 100%;
+}
+
+.DevelopmentProjectDetails .discription {
+margin-top: 5vh;
+}
+.DevelopmentProjectDetails .discription p {
+max-width: 100%;
+}
+}
+
+
+.image-gallery-slide .image-gallery-image{
+  object-fit: cover !important;
+}
+
+.image-gallery-thumbnail.active, .image-gallery-thumbnail:focus{
+  border: none !important;
+}
