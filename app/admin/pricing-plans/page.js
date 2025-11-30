@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Notifcation from "@/app/Components/Notification";
 import LoadingPage from "@/app/Components/Loader/Loader";
 import { Icon } from "@iconify/react";
+import PageHeader from "@/app/Components/UI/PageHeader";
 
 const Page = () => {
   const { pricingPlans, loading: fetchLoading, refetch } = usePricingPlans();
@@ -88,15 +89,19 @@ const Page = () => {
   const currentPlan = plans[activePlan];
 
   return (
-    <div className="mt-3">
+    <div className="mt-3 animate-fadeIn">
       {saveLoading && <LoadingPage />}
       <Notifcation />
 
       {/* Header */}
-      <div>
-        <h3 className="text-white text-[1.3rem] font-bold">Pricing Plans Management</h3>
-        <p className="text-body text-sm mt-1">Edit pricing plans displayed on the pricing page</p>
-      </div>
+      <PageHeader
+        title="Pricing Plans Management"
+        description="Edit pricing plans displayed on the pricing page"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/admin", icon: "mdi:view-dashboard" },
+          { label: "Pricing Plans" }
+        ]}
+      />
 
       {/* Plan Selector */}
       <div className="mt-6 flex gap-3 flex-wrap">
